@@ -25,8 +25,13 @@ def index():
         .limit(10)
         .all()
     )
-    print(top_customers)
-    return render_template('home/index.html', segment='index', top_customers=top_customers)
+    daily_sales = (
+        db.session.query(func.sum(SaleOrder.total_amount).label('daily_sales'))
+        .filter(func.date(SaleOrder.order_date) == func.current_date())
+        .scalar()
+    )
+
+    return render_template('home/index.html', segment='index', top_customers=top_customers, daily_sales=daily_sales)
 
 
 @blueprint.route('/<template>')
