@@ -7,7 +7,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
-from flask_admin import Admin
+# from flask_admin import Admin
 from apps.sale import blueprint as sale_blueprint
 # from apps.sale.models import SaleOrder
 
@@ -46,7 +46,7 @@ def create_app(config):
     register_extensions(app)
     app.register_blueprint(github_blueprint, url_prefix="/login")
     # app.register_blueprint(sale_blueprint, url_prefix='/sale')
-    admin = Admin(app, name='Admin', template_mode='bootstrap4')
+    # admin = Admin(app, name='Admin', template_mode='bootstrap4')
     register_blueprints(app)
     configure_database(app)
 
