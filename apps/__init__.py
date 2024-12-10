@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 # from flask_admin import Admin
 from apps.sale import blueprint as sale_blueprint
-# from apps.sale.models import SaleOrder
+from apps.customer import blueprint as customer_blueprint
 
 
 
@@ -23,7 +23,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    for module_name in ('authentication', 'home', 'sale'):
+    for module_name in ('authentication', 'home', 'sale', 'customer'):
         module = import_module('apps.{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 

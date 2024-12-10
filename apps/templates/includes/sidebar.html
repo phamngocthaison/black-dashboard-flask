@@ -27,6 +27,11 @@
                     <p>Sale Orders</p>
                 </a>
             </li>
+            <li class="{% if 'customer' in segment %} active {% endif %}">
+                <a href="{{ url_for('customer_blueprint.get_customers') }}">
+                    <i class="tim-icons icon-badge"></i>
+                    <p>Customers</p>
+                </a>
             <li class="{% if 'templates' in segment %} active {% endif %}">
                 <a data-toggle="collapse" href="#templatesSubmenu" aria-expanded="false" class="dropdown-toggle">
                     <i class="tim-icons icon-components"></i>

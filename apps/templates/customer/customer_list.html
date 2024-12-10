@@ -1,0 +1,52 @@
+<!-- apps/templates/customer/customer_list.html -->
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Customer List {% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"> Customer List </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table tablesorter">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for customer in customers %}
+                                        <tr>
+                                            <td>{{ customer.customer_id }}</td>
+                                            <td>{{ customer.name }}</td>
+                                            <td>{{ customer.phone }}</td>
+                                            <td>{{ customer.email }}</td>
+                                            <td>{{ customer.address }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <a href="{{ url_for('customer_blueprint.create_customer') }}">
+                                <button class ="btn btn-fill btn-primary">Create Customer</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}{% endblock javascripts %}
