@@ -1,38 +1,40 @@
-<!-- templates/sale/create_order.html -->
+<!-- apps/templates/sale/create_order.html -->
 
 {% extends "layouts/base.html" %}
 
-{% block title %} Create Sale Order {% endblock %}
+{% block title %} Create Order {% endblock %}
 
 {% block content %}
-    <div class="content">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Create Sale Order</h4>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST">
-                            <div class="form-group">
-                                <label for="customer_name">Customer Name:</label>
-                                <input type="text" class="form-control" id="customer_name" name="customer_name"
-                                       required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_date">Order Date:</label>
-                                <input type="date" class="form-control" id="order_date" name="order_date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="total_amount">Total Amount:</label>
-                                <input type="number" class="form-control" id="total_amount" name="total_amount"
-                                       step="0.01" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create Order</button>
-                        </form>
-                    </div>
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"> Create Order </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('sale_blueprint.create_order') }}">
+                        <div class="form-group">
+                            <label for="customer">Customer</label>
+                            <select class="form-control" id="customer_id" name="customer_id">
+                                {% for customer in customers %}
+                                    <option value="{{ customer.customer_id }}">{{ customer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="order_date">Order Date</label>
+                            <input type="date" class="form-control" id="order_date" name="order_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="total_amount">Total Amount</label>
+                            <input type="number" class="form-control" id="total_amount" name="total_amount" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-fill btn-primary">Create Order</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}

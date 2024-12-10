@@ -18,30 +18,72 @@
                         <div class="table-responsive">
                             <table class="table tablesorter">
                                 <thead class="text-primary">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
-                                    </tr>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {% for customer in customers %}
-                                        <tr>
-                                            <td>{{ customer.customer_id }}</td>
-                                            <td>{{ customer.name }}</td>
-                                            <td>{{ customer.phone }}</td>
-                                            <td>{{ customer.email }}</td>
-                                            <td>{{ customer.address }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for customer in customers %}
+                                    <tr>
+                                        <td>{{ customer.customer_id }}</td>
+                                        <td>{{ customer.name }}</td>
+                                        <td>{{ customer.phone }}</td>
+                                        <td>{{ customer.email }}</td>
+                                        <td>{{ customer.address }}</td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
-                            <a href="{{ url_for('customer_blueprint.create_customer') }}">
-                                <button class ="btn btn-fill btn-primary">Create Customer</button>
-                            </a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"> Add Customer </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('customer_blueprint.create_customer') }}" method="POST">
+                            <div class="row">
+                                <div class="col-md-6 pr-md-1">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input type="text" name="name" class="form-control" placeholder="Name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 pr-md-1">
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input type="text" name="phone" class="form-control" placeholder="Phone"
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 pr-md-1">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" class="form-control" placeholder="Email"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 pr-md-1">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="address" class="form-control" placeholder="Address"
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-fill btn-primary">Add Customer</button>
+                        </form>
                     </div>
                 </div>
             </div>
