@@ -2,18 +2,31 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-
+from apps import db
 from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required
 from jinja2 import TemplateNotFound
-
+from apps.customer.models import Customer
+from apps.sale.models import SaleOrder
+from sqlalchemy import func
 
 @blueprint.route('/index')
 @login_required
 def index():
-
-    return render_template('home/index.html', segment='index')
+    top_customers = (
+        db.session.query(
+            Customer,
+            func.sum(SaleOrder.total_amount).label('total_order_amount')
+        )
+        .join(SaleOrder, Customer.customer_id == SaleOrder.customer_id)
+        .group_by(Customer.customer_id)
+        .order_by(func.sum(SaleOrder.total_amount).desc())
+        .limit(10)
+        .all()
+    )
+    print(top_customers)
+    return render_template('home/index.html', segment='index', top_customers=top_customers)
 
 
 @blueprint.route('/<template>')
