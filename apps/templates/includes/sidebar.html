@@ -32,6 +32,12 @@
                     <i class="tim-icons icon-badge"></i>
                     <p>Customers</p>
                 </a>
+            </li>
+            <li class="{% if 'employee' in segment %} active {% endif %}">
+                <a href="{{ url_for('employee_blueprint.get_employees') }}">
+                    <i class="tim-icons icon-satisfied"></i>
+                    <p>Employees</p>
+                </a>
             <li class="{% if 'templates' in segment %} active {% endif %}">
                 <a data-toggle="collapse" href="#templatesSubmenu" aria-expanded="false" class="dropdown-toggle">
                     <i class="tim-icons icon-components"></i>
@@ -60,6 +66,12 @@
                         <a href="/typography.html">
                             <i class="tim-icons icon-align-center"></i>
                             <p>Typography</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/icons.html">
+                            <i class="tim-icons icon-atom"></i>
+                            <p>Icons</p>
                         </a>
                     </li>
                 </ul>
