@@ -51,16 +51,19 @@ def create_order():
     if request.method == 'POST':
         customer_id = request.form['customer_id']
         order_date = datetime.strptime(request.form['order_date'], '%Y-%m-%d').date()
-        total_amount = request.form['total_amount']
-
-        new_order = SaleOrder(customer_id=customer_id, order_date=order_date, total_amount=total_amount)
-        db.session.add(new_order)
-        db.session.commit()
 
         # Handle order details
         product_ids = request.form.getlist('product_id')
         quantities = request.form.getlist('quantity')
         unit_prices = request.form.getlist('unit_price')
+
+        total_amount = 0
+        for quantity, unit_price in zip(quantities, unit_prices):
+            total_amount += int(quantity) * float(unit_price)
+
+        new_order = SaleOrder(customer_id=customer_id, order_date=order_date, total_amount=total_amount)
+        db.session.add(new_order)
+        db.session.commit()
 
         for product_id, quantity, unit_price in zip(product_ids, quantities, unit_prices):
             order_detail = OrderDetails(
@@ -78,3 +81,9 @@ def create_order():
     customers = Customer.query.all()
     products = Products.query.all()
     return render_template('sale/create_order.html', customers=customers, products=products)
+
+@blueprint.route('/order/<int:order_id>')
+def view_order(order_id):
+    order = SaleOrder.query.get_or_404(order_id)
+    order_details = OrderDetails.query.filter_by(order_id=order_id).all()
+    return render_template('sale/view_order.html', order=order, order_details=order_details)

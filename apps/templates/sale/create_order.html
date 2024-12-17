@@ -28,14 +28,14 @@
                         </div>
                         <div class="form-group">
                             <label for="total_amount">Total Amount</label>
-                            <input type="number" class="form-control" id="total_amount" name="total_amount" step="0.01" required>
+                            <input type="number" class="form-control" id="total_amount" name="total_amount" step="0.01" readonly>
                         </div>
                         <h3>Order Details</h3>
                         <div id="order-details">
                             <div class="order-detail row">
                                 <div class="form-group col-md-4">
                                     <label for="product_id">Product</label>
-                                    <select class="form-control" name="product_id">
+                                    <select class="form-control" name="product_id" onchange="updateTotalAmount()">
                                         {% for product in products %}
                                             <option value="{{ product.product_id }}">{{ product.name }}</option>
                                         {% endfor %}
@@ -43,11 +43,11 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="quantity">Quantity</label>
-                                    <input type="number" class="form-control" name="quantity" required>
+                                    <input type="number" class="form-control" name="quantity" required onchange="updateTotalAmount()">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="unit_price">Unit Price</label>
-                                    <input type="number" class="form-control" name="unit_price" step="0.01" required>
+                                    <input type="number" class="form-control" name="unit_price" step="0.01" required onchange="updateTotalAmount()">
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,20 @@
 function addOrderDetail() {
     const orderDetails = document.getElementById('order-details');
     const newDetail = document.querySelector('.order-detail').cloneNode(true);
+    newDetail.querySelectorAll('input, select').forEach(input => input.value = '');
     orderDetails.appendChild(newDetail);
+}
+
+function updateTotalAmount() {
+    let totalAmount = 0;
+    document.querySelectorAll('.order-detail').forEach(detail => {
+        const quantity = detail.querySelector('input[name="quantity"]').value;
+        const unitPrice = detail.querySelector('input[name="unit_price"]').value;
+        if (quantity && unitPrice) {
+            totalAmount += parseFloat(quantity) * parseFloat(unitPrice);
+        }
+    });
+    document.getElementById('total_amount').value = totalAmount.toFixed(2);
 }
 </script>
 {% endblock content %}
