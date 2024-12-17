@@ -13,7 +13,9 @@ class SaleOrder(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.customer_id', name='fk_sale_orders_customers'),
                             nullable=False)
     customer = db.relationship('Customer', backref=db.backref('sales', lazy=True))
-    # order_details = db.relatiidonship('OrderDetails', backref='order_id', lazy=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.employee_id', name='fk_sale_orders_employees'),
+                            nullable=True)
+    employee = db.relationship('Employee', backref=db.backref('sales', lazy=True))
 
     def __repr__(self):
         return f'<SaleOrder {self.id}>'

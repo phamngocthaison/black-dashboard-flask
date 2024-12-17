@@ -5,14 +5,17 @@ from flask import render_template, request, redirect, url_for
 from apps.sale.models import SaleOrder, OrderDetails
 from apps.product.models import Products
 from apps.customer.models import Customer
+from apps.employee.models import Employee
 from apps import db
 from datetime import datetime
+
 
 @blueprint.route('/')
 def orders():
     orders = SaleOrder.query.all()
     print(orders)
     return render_template('sale/sale_order.html', orders=orders)
+
 
 # @blueprint.route('/create', methods=['GET', 'POST'])
 # def create_order():
@@ -50,6 +53,7 @@ def orders():
 def create_order():
     if request.method == 'POST':
         customer_id = request.form['customer_id']
+        employee_id = request.form['employee_id']
         order_date = datetime.strptime(request.form['order_date'], '%Y-%m-%d').date()
 
         # Handle order details
@@ -61,7 +65,7 @@ def create_order():
         for quantity, unit_price in zip(quantities, unit_prices):
             total_amount += int(quantity) * float(unit_price)
 
-        new_order = SaleOrder(customer_id=customer_id, order_date=order_date, total_amount=total_amount)
+        new_order = SaleOrder(customer_id=customer_id, order_date=order_date, total_amount=total_amount, employee_id=employee_id)
         db.session.add(new_order)
         db.session.commit()
 
@@ -70,7 +74,7 @@ def create_order():
                 order_id=new_order.id,
                 product_id=product_id,
                 quantity=quantity,
-                unit_price=unit_price
+                unit_price=unit_price,
             )
             db.session.add(order_detail)
 
@@ -80,7 +84,9 @@ def create_order():
 
     customers = Customer.query.all()
     products = Products.query.all()
-    return render_template('sale/create_order.html', customers=customers, products=products)
+    employees = Employee.query.all()
+    return render_template('sale/create_order.html', customers=customers, products=products, employees=employees)
+
 
 @blueprint.route('/order/<int:order_id>')
 def view_order(order_id):
