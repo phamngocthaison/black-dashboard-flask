@@ -8,7 +8,8 @@ from flask import render_template, request
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.customer.models import Customer
-from apps.sale.models import SaleOrder
+from apps.sale.models import SaleOrder, OrderDetails
+from apps.product.models import Products
 from apps.employee.models import Employee
 from sqlalchemy import func
 
@@ -28,6 +29,21 @@ def get_top_employee():
     return top_employees
 
 
+def get_top_products():
+    top_products = (
+        db.session.query(
+            Products,
+            func.sum(OrderDetails.quantity * OrderDetails.unit_price).label('total_sales')
+        )
+        .join(OrderDetails, Products.product_id == OrderDetails.product_id)
+        .group_by(Products.product_id)
+        .order_by(func.sum(OrderDetails.quantity * OrderDetails.unit_price).desc())
+        .limit(10)
+        .all()
+    )
+    return top_products
+
+
 @blueprint.route('/index')
 @login_required
 def index():
@@ -43,6 +59,7 @@ def index():
         .all()
     )
     top_employees = get_top_employee()
+    top_products = get_top_products()
     daily_sales = db.session.query(
         Employee.name,
         func.sum(SaleOrder.total_amount).label('total_sales')
@@ -53,7 +70,8 @@ def index():
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
-                           total_sales=total_sales, top_employees=top_employees)
+                           total_sales=total_sales, top_employees=top_employees,
+                           top_products=top_products)
 
 
 @blueprint.route('/<template>')

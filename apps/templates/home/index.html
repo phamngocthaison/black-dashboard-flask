@@ -95,7 +95,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-4 col-md-12">
                 <div class="card ">
                     <div class="card-header">
                         <h4 class="card-title"> Top 10 Customers</h4>
@@ -122,7 +122,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-4 col-md-12">
                 <div class="card ">
                     <div class="card-header">
                         <h4 class="card-title"> Top 10 Employees</h4>
@@ -140,6 +140,33 @@
                                 {% for employee, total_sales in top_employees %}
                                     <tr>
                                         <td>{{ employee.name }}</td>
+                                        <td>{{ total_sales }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="card ">
+                    <div class="card-header">
+                        <h4 class="card-title"> Top 10 Products</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table tablesorter " id="">
+                                <thead class=" text-primary">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Total Sales</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product, total_sales in top_products %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
                                         <td>{{ total_sales }}</td>
                                     </tr>
                                 {% endfor %}
