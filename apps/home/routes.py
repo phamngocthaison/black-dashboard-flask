@@ -44,6 +44,16 @@ def get_top_products():
     return top_products
 
 
+def get_monthly_sales():
+    monthly_sales = db.session.query(
+        func.strftime('%Y-%m', SaleOrder.order_date).label('month'),
+        func.sum(SaleOrder.total_amount).label('total_sales')
+    ).group_by('month').order_by('month').all()
+
+    months = [sale.month for sale in monthly_sales]
+    monthly_totals = [sale.total_sales for sale in monthly_sales]
+    return months, monthly_totals
+
 @blueprint.route('/index')
 @login_required
 def index():
@@ -67,11 +77,13 @@ def index():
     employee_names = [sale.name for sale in daily_sales]
     daily_total = sum([sale.total_sales for sale in daily_sales])
     total_sales = [sale.total_sales for sale in daily_sales]
+    months, monthly_totals = get_monthly_sales()
+    print(months, monthly_totals)
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales, top_employees=top_employees,
-                           top_products=top_products)
+                           top_products=top_products, months=months, monthly_totals=monthly_totals)
 
 
 @blueprint.route('/<template>')
