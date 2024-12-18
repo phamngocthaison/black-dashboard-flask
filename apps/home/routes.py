@@ -25,13 +25,17 @@ def index():
         .limit(10)
         .all()
     )
-    daily_sales = (
-        db.session.query(func.sum(SaleOrder.total_amount).label('daily_sales'))
-        .filter(func.date(SaleOrder.order_date) == func.current_date())
-        .scalar()
-    )
-
-    return render_template('home/index.html', segment='index', top_customers=top_customers, daily_sales=daily_sales)
+    daily_sales = db.session.query(
+        SaleOrder.employee_id,
+        func.sum(SaleOrder.total_amount).label('total_sales')
+    ).group_by(SaleOrder.employee_id).all()
+    employee_ids = [sale.employee_id for sale in daily_sales]
+    daily_total = sum([sale.total_sales for sale in daily_sales])
+    total_sales = [sale.total_sales for sale in daily_sales]
+    return render_template('home/index.html', segment='index',
+                           top_customers=top_customers, daily_sales=daily_sales,
+                           employee_ids=employee_ids, daily_total=daily_total,
+                           total_sales=total_sales)
 
 
 @blueprint.route('/<template>')
