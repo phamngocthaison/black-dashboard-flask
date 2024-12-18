@@ -9,6 +9,7 @@ from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.customer.models import Customer
 from apps.sale.models import SaleOrder
+from apps.employee.models import Employee
 from sqlalchemy import func
 
 @blueprint.route('/index')
@@ -26,15 +27,15 @@ def index():
         .all()
     )
     daily_sales = db.session.query(
-        SaleOrder.employee_id,
+        Employee.name,
         func.sum(SaleOrder.total_amount).label('total_sales')
-    ).group_by(SaleOrder.employee_id).all()
-    employee_ids = [sale.employee_id for sale in daily_sales]
+    ).join(Employee, SaleOrder.employee_id == Employee.employee_id).group_by(Employee.name).all()
+    employee_names = [sale.name for sale in daily_sales]
     daily_total = sum([sale.total_sales for sale in daily_sales])
     total_sales = [sale.total_sales for sale in daily_sales]
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
-                           employee_ids=employee_ids, daily_total=daily_total,
+                           employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales)
 
 
