@@ -12,6 +12,22 @@ from apps.sale.models import SaleOrder
 from apps.employee.models import Employee
 from sqlalchemy import func
 
+
+def get_top_employee():
+    top_employees = (
+        db.session.query(
+            Employee,
+            func.sum(SaleOrder.total_amount).label('total_sales')
+        )
+        .join(SaleOrder, Employee.employee_id == SaleOrder.employee_id)
+        .group_by(Employee.employee_id)
+        .order_by(func.sum(SaleOrder.total_amount).desc())
+        .limit(10)
+        .all()
+    )
+    return top_employees
+
+
 @blueprint.route('/index')
 @login_required
 def index():
@@ -26,6 +42,7 @@ def index():
         .limit(10)
         .all()
     )
+    top_employees = get_top_employee()
     daily_sales = db.session.query(
         Employee.name,
         func.sum(SaleOrder.total_amount).label('total_sales')
@@ -36,13 +53,12 @@ def index():
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
-                           total_sales=total_sales)
+                           total_sales=total_sales, top_employees=top_employees)
 
 
 @blueprint.route('/<template>')
 @login_required
 def route_template(template):
-
     try:
 
         if not template.endswith('.html'):
@@ -63,7 +79,6 @@ def route_template(template):
 
 # Helper - Extract current page name from request
 def get_segment(request):
-
     try:
 
         segment = request.path.split('/')[-1]
