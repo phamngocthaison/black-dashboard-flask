@@ -4,6 +4,7 @@ from flask import request, jsonify, render_template, redirect, url_for, flash
 from apps import db
 from apps.product.models import Products
 from apps.product import blueprint
+from flask_login import login_required
 
 product_blueprint = blueprint
 
@@ -34,18 +35,19 @@ def get_product(product_id):
     return jsonify(product.__repr__())
 
 
-@product_blueprint.route('/product/<int:product_id>', methods=['PUT'])
-def update_product(product_id):
-    data = request.get_json()
+@product_blueprint.route('/product/<int:product_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_product(product_id):
     product = Products.query.get_or_404(product_id)
-    product.name = data['name']
-    product.description = data['description']
-    product.price = float(data['price'])
-    product.stock = int(data['stock'])
-    db.session.commit()
-    return jsonify(product.__repr__())
-
-
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.price = request.form['price']
+        product.stock = request.form['stock']
+        product.description = request.form['description']
+        db.session.commit()
+        flash('Product updated successfully', 'success')
+        return redirect(url_for('product_blueprint.get_products'))
+    return render_template('product/edit_product.html', product=product)
 @product_blueprint.route('/product/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
     product = Products.query.get_or_404(product_id)

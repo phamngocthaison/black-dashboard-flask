@@ -22,6 +22,7 @@
                                     <th>Description</th>
                                     <th>Price</th>
                                     <th>Stock</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -32,6 +33,8 @@
                                         <td>{{ product.description }}</td>
                                         <td>{{ product.price }}</td>
                                         <td>{{ product.stock }}</td>
+                                        <td>
+                                            <a href="{{ url_for('product_blueprint.edit_product', product_id=product.product_id) }}" class="btn btn-secondary">Edit</a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
