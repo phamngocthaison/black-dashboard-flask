@@ -14,31 +14,31 @@
                     <div class="card-header ">
                         <div class="row">
                             <div class="col-sm-6 text-left">
-                                <h5 class="card-category">Total Shipment</h5>
+{#                                <h5 class="card-category">Total Shipment</h5>#}
                                 <h2 class="card-title">Sales Performance</h2>
                             </div>
                             <div class="col-sm-6">
                                 <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
                                     <label class="btn btn-sm btn-primary btn-simple active" id="0">
                                         <input type="radio" name="options" checked>
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Order Amount</span>
+                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Gross Merchandise (GMV)</span>
                                         <span class="d-block d-sm-none">
                         <i class="tim-icons icon-single-02"></i>
                     </span>
                                     </label>
                                     <label class="btn btn-sm btn-primary btn-simple" id="1">
                                         <input type="radio" class="d-none d-sm-none" name="options">
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Product Quantity</span>
+                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Number of shipments</span>
                                         <span class="d-block d-sm-none">
                         <i class="tim-icons icon-gift-2"></i>
                     </span>
-                                    </label>
-                                    <label class="btn btn-sm btn-primary btn-simple" id="2">
-                                        <input type="radio" class="d-none" name="options">
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>
-                                        <span class="d-block d-sm-none">
-                        <i class="tim-icons icon-tap-02"></i>
-                    </span>
+{#                                    </label>#}
+{#                                    <label class="btn btn-sm btn-primary btn-simple" id="2">#}
+{#                                        <input type="radio" class="d-none" name="options">#}
+{#                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>#}
+{#                                        <span class="d-block d-sm-none">#}
+{#                        <i class="tim-icons icon-tap-02"></i>#}
+{#                    </span>#}
                                     </label>
                                 </div>
                             </div>
@@ -47,6 +47,7 @@
                     <div class="card-body">
                         <div class="chart-area">
                             <canvas id="chartBig1" height="50"></canvas>
+                            <canvas id="chartShipments" height="50" style="display: none;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -249,9 +250,48 @@
                 }
             });
 
+            var ctxShipments = document.getElementById('chartShipments').getContext('2d');
+            var shipmentsChart = new Chart(ctxShipments, {
+                type: 'line',
+                data: {
+                    labels: {{ shipment_months | tojson }},
+                    datasets: [{
+                        label: 'Total Order Quantity',
+                        data: {{ shipment_quantities | tojson }},
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Month'
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
             // Handle tab switch
             document.getElementById('0').addEventListener('click', function () {
                 salesPerformanceChart.update();
+                document.getElementById('chartBig1').style.display = 'block';
+                document.getElementById('chartShipments').style.display = 'none';
+            });
+
+            document.getElementById('1').addEventListener('click', function () {
+                shipmentsChart.update();
+                document.getElementById('chartBig1').style.display = 'none';
+                document.getElementById('chartShipments').style.display = 'block';
             });
         });
         document.addEventListener('DOMContentLoaded', function () {

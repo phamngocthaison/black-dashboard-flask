@@ -78,6 +78,17 @@ def get_last_7_days_product_qty():
     return dates, quantities
 
 
+def get_monthly_order_quantities():
+    monthly_order_quantities = db.session.query(
+        func.strftime('%Y-%m', SaleOrder.order_date).label('month'),
+        func.sum(OrderDetails.quantity).label('total_quantity')
+    ).join(OrderDetails, SaleOrder.id == OrderDetails.order_id).group_by('month').order_by('month').all()
+
+    months = [record.month for record in monthly_order_quantities]
+    quantities = [record.total_quantity for record in monthly_order_quantities]
+    return months, quantities
+
+
 @blueprint.route('/index')
 @login_required
 def index():
@@ -104,13 +115,15 @@ def index():
     months, monthly_totals = get_monthly_sales()
     total_stock_qty_sold_today = get_today_qty()
     dates, quantities = get_last_7_days_product_qty()
+    shipment_months, shipment_quantities = get_monthly_order_quantities()
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales, top_employees=top_employees,
                            top_products=top_products, months=months, monthly_totals=monthly_totals,
                            total_stock_qty_sold_today=total_stock_qty_sold_today,
-                           dates=dates, quantities=quantities)
+                           dates=dates, quantities=quantities,
+                           shipment_months=shipment_months, shipment_quantities=shipment_quantities)
 
 
 @blueprint.route('/<template>')
