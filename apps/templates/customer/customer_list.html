@@ -24,7 +24,8 @@
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Address</th>
-                                    <th>Total Order Amount</th>
+                                    <th>Loyalty amount</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -36,6 +37,10 @@
                                         <td>{{ customer.email }}</td>
                                         <td>{{ customer.address }}</td>
                                         <td>{{ customer.total_order_amount }}</td>
+                                        <td>
+                                            <a href="{{ url_for('customer_blueprint.edit_customer', customer_id=customer.customer_id) }}"
+                                               class="btn btn-warning btn-sm">Edit</a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
