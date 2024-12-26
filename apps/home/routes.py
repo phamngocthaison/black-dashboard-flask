@@ -52,6 +52,16 @@ def get_today_qty():
     return total_stock_qty_sold
 
 
+def get_today_sales():
+    today = datetime.now().date()
+    total_sales_today = db.session.query(
+        func.sum(SaleOrder.total_amount).label('total_sales')
+    ).filter(
+        func.date(SaleOrder.order_date) == today
+    ).scalar()
+    return total_sales_today
+
+
 def get_monthly_sales():
     monthly_sales = db.session.query(
         func.strftime('%Y-%m', SaleOrder.order_date).label('month'),
@@ -88,6 +98,25 @@ def get_monthly_order_quantities():
     quantities = [record.total_quantity for record in monthly_order_quantities]
     return months, quantities
 
+def get_last_7_days_employee_orders():
+    today = datetime.now().date()
+    seven_days_ago = today - timedelta(days=6)
+    daily_employee_orders = db.session.query(
+        func.strftime('%Y-%m-%d', SaleOrder.order_date).label('date'),
+        Employee.name,
+        func.count(SaleOrder.id).label('order_count')
+    ).join(Employee, SaleOrder.employee_id == Employee.employee_id).filter(
+        SaleOrder.order_date.between(seven_days_ago, today)
+    ).group_by('date', Employee.name).order_by('date').all()
+
+    data = {}
+    for record in daily_employee_orders:
+        if record.name not in data:
+            data[record.name] = {'dates': [], 'order_counts': []}
+        data[record.name]['dates'].append(record.date)
+        data[record.name]['order_counts'].append(record.order_count)
+
+    return data
 
 @blueprint.route('/index')
 @login_required
@@ -116,6 +145,8 @@ def index():
     total_stock_qty_sold_today = get_today_qty()
     dates, quantities = get_last_7_days_product_qty()
     shipment_months, shipment_quantities = get_monthly_order_quantities()
+    total_sales_today = get_today_sales()
+    employee_orders_data = get_last_7_days_employee_orders()
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
@@ -123,7 +154,9 @@ def index():
                            top_products=top_products, months=months, monthly_totals=monthly_totals,
                            total_stock_qty_sold_today=total_stock_qty_sold_today,
                            dates=dates, quantities=quantities,
-                           shipment_months=shipment_months, shipment_quantities=shipment_quantities)
+                           shipment_months=shipment_months, shipment_quantities=shipment_quantities,
+                           total_sales_today=total_sales_today,
+                           employee_orders_data=employee_orders_data)
 
 
 @blueprint.route('/<template>')

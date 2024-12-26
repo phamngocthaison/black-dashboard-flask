@@ -14,7 +14,7 @@
                     <div class="card-header ">
                         <div class="row">
                             <div class="col-sm-6 text-left">
-{#                                <h5 class="card-category">Total Shipment</h5>#}
+                                {#                                <h5 class="card-category">Total Shipment</h5>#}
                                 <h2 class="card-title">Sales Performance</h2>
                             </div>
                             <div class="col-sm-6">
@@ -32,13 +32,13 @@
                                         <span class="d-block d-sm-none">
                         <i class="tim-icons icon-gift-2"></i>
                     </span>
-{#                                    </label>#}
-{#                                    <label class="btn btn-sm btn-primary btn-simple" id="2">#}
-{#                                        <input type="radio" class="d-none" name="options">#}
-{#                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>#}
-{#                                        <span class="d-block d-sm-none">#}
-{#                        <i class="tim-icons icon-tap-02"></i>#}
-{#                    </span>#}
+                                        {#                                    </label>#}
+                                        {#                                    <label class="btn btn-sm btn-primary btn-simple" id="2">#}
+                                        {#                                        <input type="radio" class="d-none" name="options">#}
+                                        {#                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>#}
+                                        {#                                        <span class="d-block d-sm-none">#}
+                                        {#                        <i class="tim-icons icon-tap-02"></i>#}
+                                        {#                    </span>#}
                                     </label>
                                 </div>
                             </div>
@@ -85,12 +85,13 @@
             <div class="col-lg-4">
                 <div class="card card-chart">
                     <div class="card-header">
-                        <h5 class="card-category">Completed Tasks</h5>
-                        <h3 class="card-title"><i class="tim-icons icon-send text-success"></i> 12,100K</h3>
+                        <h5 class="card-category">Daily Sale Performance</h5>
+                        <h3 class="card-title"><i class="tim-icons icon-send text-success"></i> {{ total_sales_today }}
+                            VNĐ</h3>
                     </div>
                     <div class="card-body">
                         <div class="chart-area">
-                            <canvas id="chartLineGreen"></canvas>
+                            <canvas id="employeeOrdersChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -326,6 +327,56 @@
                 }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('employeeOrdersChart').getContext('2d');
+            var employeeOrdersData = {{ employee_orders_data | tojson }};
+            var datasets = [];
+
+            for (var employee in employeeOrdersData) {
+                datasets.push({
+                    label: employee,
+                    data: employeeOrdersData[employee].order_counts,
+                    fill: false,
+                    borderColor: getRandomColor(),
+                    borderWidth: 1
+                });
+            }
+
+            var employeeOrdersChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: employeeOrdersData[Object.keys(employeeOrdersData)[0]].dates,
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+        });
     </script>
+
+
 
 {% endblock javascripts %}
