@@ -12,6 +12,7 @@ from apps.sale.models import SaleOrder, OrderDetails
 from apps.product.models import Products
 from apps.employee.models import Employee
 from sqlalchemy import func
+from datetime import datetime, timedelta
 
 
 def get_top_employee():
@@ -62,6 +63,21 @@ def get_monthly_sales():
     return months, monthly_totals
 
 
+def get_last_7_days_product_qty():
+    today = datetime.now().date()
+    seven_days_ago = today - timedelta(days=6)
+    daily_product_qty = db.session.query(
+        func.strftime('%Y-%m-%d', SaleOrder.order_date).label('date'),
+        func.sum(OrderDetails.quantity).label('total_qty')
+    ).join(SaleOrder, OrderDetails.order_id == SaleOrder.id).filter(
+        SaleOrder.order_date.between(seven_days_ago, today)
+    ).group_by('date').order_by('date').all()
+
+    dates = [record.date for record in daily_product_qty]
+    quantities = [record.total_qty for record in daily_product_qty]
+    return dates, quantities
+
+
 @blueprint.route('/index')
 @login_required
 def index():
@@ -87,12 +103,14 @@ def index():
     total_sales = [sale.total_sales for sale in daily_sales]
     months, monthly_totals = get_monthly_sales()
     total_stock_qty_sold_today = get_today_qty()
+    dates, quantities = get_last_7_days_product_qty()
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales, top_employees=top_employees,
                            top_products=top_products, months=months, monthly_totals=monthly_totals,
-                           total_stock_qty_sold_today=total_stock_qty_sold_today)
+                           total_stock_qty_sold_today=total_stock_qty_sold_today,
+                           dates=dates, quantities=quantities)
 
 
 @blueprint.route('/<template>')
