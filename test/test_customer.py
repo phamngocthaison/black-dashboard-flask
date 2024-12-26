@@ -73,6 +73,15 @@ class TestCustomerRoutes(TestCase):
             response = client.get('/customer/customers')
             self.assertIn(b'Jane Doe', response.data)
 
+    def test_update_customer(self):
+        user = User(id=1)
+        with self.app.test_client(user=user) as client:
+            # Update the sample customer
+            response = client.post('/customer/customer/1/edit', data=dict(
+                name='John Smith', phone='987-654-3210', email='john.smith@example.com', address='456 Elm St'
+            ))
+            self.assertEqual(response.status_code, 302)
+
 
 if __name__ == '__main__':
     unittest.main()
