@@ -23,6 +23,7 @@
                                     <th>Email</th>
                                     <th>Position</th>
                                     <th>Hire Date</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -34,6 +35,9 @@
                                         <td>{{ employee.email }}</td>
                                         <td>{{ employee.position }}</td>
                                         <td>{{ employee.hire_date }}</td>
+                                        <td>
+                                            <a href="{{ url_for('employee_blueprint.edit_employee', employee_id=employee.employee_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
