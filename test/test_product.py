@@ -64,6 +64,33 @@ class TestProductRoutes(TestCase):
             self.assertEqual(data['price'], product.price)
             self.assertEqual(data['stock'], product.stock)
 
+    def test_create_product(self):
+        user = User(id=1)
+        with self.app.test_client(user=user) as client:
+            response = client.post('/products/product', data=dict(
+                name='New Product', description='New Description', price=20.0, stock=50
+            ))
+            self.assertEqual(response.status_code, 302)
+            product = Products.query.filter_by(name='New Product').first()
+            self.assertIsNotNone(product)
+            self.assertEqual(product.description, 'New Description')
+            self.assertEqual(product.price, 20.0)
+            self.assertEqual(product.stock, 50)
+
+    def test_update_product(self):
+        user = User(id=1)
+        with self.app.test_client(user=user) as client:
+            product = Products.query.first()
+            response = client.post(f'/products/product/{product.product_id}/edit', data=dict(
+                name='Updated Product', description='Updated Description', price=30.0, stock=60
+            ))
+            self.assertEqual(response.status_code, 302)
+            updated_product = Products.query.get(product.product_id)
+            self.assertEqual(updated_product.name, 'Updated Product')
+            self.assertEqual(updated_product.description, 'Updated Description')
+            self.assertEqual(updated_product.price, 30.0)
+            self.assertEqual(updated_product.stock, 60)
+
 
 if __name__ == '__main__':
     unittest.main()
