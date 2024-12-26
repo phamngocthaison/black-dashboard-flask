@@ -1,0 +1,33 @@
+<!-- apps/templates/search/results.html -->
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Search Results {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Search Results for "{{ query }}"</h2>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Employees</h3>
+                <ul>
+                    {% for employee in employees %}
+                        <li>{{ employee.name }} - {{ employee.position }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Customers</h3>
+                <ul>
+                    {% for customer in customers %}
+                        <li>{{ customer.name }} - {{ customer.email }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Products</h3>
+                <ul>
+                    {% for product in products %}
+                        <li>{{ product.name }} - ${{ product.price }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

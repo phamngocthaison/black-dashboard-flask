@@ -34,7 +34,7 @@
                                         <td>{{ product.price }}</td>
                                         <td>{{ product.stock }}</td>
                                         <td>
-                                            <a href="{{ url_for('product_blueprint.edit_product', product_id=product.product_id) }}" class="btn btn-secondary">Edit</a></td>
+                                            <a href="{{ url_for('product_blueprint.edit_product', product_id=product.product_id) }}" class="btn btn-warning btn-sm">Edit</a></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -64,7 +64,7 @@
                                 <label for="stock" class="form-label">Stock</label>
                                 <input type="number" class="form-control" id="stock" name="stock" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add Product</button>
+                            <button type="submit" class="btn btn-warning btn-sm">Add Product</button>
                         </form>
                     </div>
                 </div>
