@@ -1,4 +1,4 @@
-<!-- apps/templates/sale/create_order.html -->
+<!-- apps/templates/sale_order/create_order.html -->
 
 {% extends "layouts/base.html" %}
 
@@ -44,7 +44,7 @@
                                 <div class="order-detail row">
                                     <div class="form-group col-md-4">
                                         <label for="product_id">Product</label>
-                                        <select class="form-control" name="product_id" onchange="updateTotalAmount()">
+                                        <select class="form-control" name="product_id" onchange="loadUnitPrice(this)">
                                             {% for product in products %}
                                                 <option value="{{ product.product_id }}">{{ product.name }}</option>
                                             {% endfor %}
@@ -79,6 +79,17 @@
             const newDetail = document.querySelector('.order-detail').cloneNode(true);
             newDetail.querySelectorAll('input, select').forEach(input => input.value = '');
             orderDetails.appendChild(newDetail);
+        }
+
+        function loadUnitPrice(selectElement) {
+            const productId = selectElement.value;
+            fetch('../products/product/' + productId)
+                .then(response => response.json())
+                .then(data => {
+                    const unitPriceInput = selectElement.closest('.order-detail').querySelector('input[name="unit_price"]');
+                    unitPriceInput.value = data.price;
+                    updateTotalAmount();
+                });
         }
 
         function updateTotalAmount() {

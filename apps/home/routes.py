@@ -113,9 +113,12 @@ def get_last_7_days_employee_orders():
     for record in daily_employee_orders:
         if record.name not in data:
             data[record.name] = {'dates': [], 'order_counts': []}
+        while len(data[record.name]['dates']) < (datetime.strptime(record.date, '%Y-%m-%d').date() - seven_days_ago).days:
+            data[record.name]['dates'].append((seven_days_ago + timedelta(days=len(data[record.name]['dates']))).strftime('%Y-%m-%d'))
+            data[record.name]['order_counts'].append(0)
         data[record.name]['dates'].append(record.date)
         data[record.name]['order_counts'].append(record.order_count)
-
+    print(data)
     return data
 
 @blueprint.route('/index')

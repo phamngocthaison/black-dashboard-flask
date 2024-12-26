@@ -32,7 +32,13 @@ def create_product():
 @product_blueprint.route('/product/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     product = Products.query.get_or_404(product_id)
-    return jsonify(product.__repr__())
+    return jsonify({
+        'product_id': product.product_id,
+        'name': product.name,
+        'price': product.price,
+        'description': product.description,
+        'stock': product.stock
+    })
 
 
 @product_blueprint.route('/product/<int:product_id>/edit', methods=['GET', 'POST'])
