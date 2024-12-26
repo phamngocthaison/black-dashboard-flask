@@ -45,6 +45,7 @@
                                     <div class="form-group col-md-4">
                                         <label for="product_id">Product</label>
                                         <select class="form-control" name="product_id" onchange="loadUnitPrice(this)">
+                                        <option value="">Select Product</option>
                                             {% for product in products %}
                                                 <option value="{{ product.product_id }}">{{ product.name }}</option>
                                             {% endfor %}
