@@ -44,6 +44,13 @@ def get_top_products():
     return top_products
 
 
+def get_today_qty():
+    total_stock_qty_sold = db.session.query(
+        func.sum(OrderDetails.quantity).label('total_stock_qty_sold')
+    ).filter(func.strftime('%Y-%m-%d', SaleOrder.order_date) == func.strftime('%Y-%m-%d', func.now())).scalar()
+    return total_stock_qty_sold
+
+
 def get_monthly_sales():
     monthly_sales = db.session.query(
         func.strftime('%Y-%m', SaleOrder.order_date).label('month'),
@@ -53,6 +60,7 @@ def get_monthly_sales():
     months = [sale.month for sale in monthly_sales]
     monthly_totals = [sale.total_sales for sale in monthly_sales]
     return months, monthly_totals
+
 
 @blueprint.route('/index')
 @login_required
@@ -78,12 +86,13 @@ def index():
     daily_total = sum([sale.total_sales for sale in daily_sales])
     total_sales = [sale.total_sales for sale in daily_sales]
     months, monthly_totals = get_monthly_sales()
-    print(months, monthly_totals)
+    total_stock_qty_sold_today = get_today_qty()
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales, top_employees=top_employees,
-                           top_products=top_products, months=months, monthly_totals=monthly_totals)
+                           top_products=top_products, months=months, monthly_totals=monthly_totals,
+                           total_stock_qty_sold_today=total_stock_qty_sold_today)
 
 
 @blueprint.route('/<template>')
