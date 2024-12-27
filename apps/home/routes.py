@@ -2,6 +2,8 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import copy
+
 from apps import db
 from apps.home import blueprint
 from flask import render_template, request
@@ -100,7 +102,7 @@ def get_monthly_order_quantities():
 
 def get_last_7_days_employee_orders():
     today = datetime.now().date()
-    seven_days_ago = today - timedelta(days=6)
+    seven_days_ago = today - timedelta(days=7)
     daily_employee_orders = db.session.query(
         func.strftime('%Y-%m-%d', SaleOrder.order_date).label('date'),
         Employee.name,
@@ -110,14 +112,13 @@ def get_last_7_days_employee_orders():
     ).group_by('date', Employee.name).order_by('date').all()
 
     data = {}
+    last_days = [(seven_days_ago + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(8)]
+    default_data = {'dates': last_days, 'order_counts': [0] * 8}
     for record in daily_employee_orders:
         if record.name not in data:
-            data[record.name] = {'dates': [], 'order_counts': []}
-        while len(data[record.name]['dates']) < (datetime.strptime(record.date, '%Y-%m-%d').date() - seven_days_ago).days:
-            data[record.name]['dates'].append((seven_days_ago + timedelta(days=len(data[record.name]['dates']))).strftime('%Y-%m-%d'))
-            data[record.name]['order_counts'].append(0)
-        data[record.name]['dates'].append(record.date)
-        data[record.name]['order_counts'].append(record.order_count)
+            data[record.name] = copy.deepcopy(default_data)
+        date_index = last_days.index(record.date)
+        data[record.name]['order_counts'][date_index] = record.order_count
     print(data)
     return data
 

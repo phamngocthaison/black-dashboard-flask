@@ -19,9 +19,8 @@ COPY . .
 RUN flask db init
 RUN flask db migrate
 RUN flask db upgrade
-
 # init db
-CMD ["python", "init_db.py"]
+RUN python init_db.py
 
 # gunicorn
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]
