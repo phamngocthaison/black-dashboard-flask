@@ -386,16 +386,79 @@ with app.app_context():
     order_detail39_2 = OrderDetails(order_id=order39.id, product_id=product4.product_id, quantity=195, unit_price=product4.price)
     db.session.add(order_detail39_2)
     db.session.commit()
-    employee_data = {'Sơn Phạm': {
-        'dates': ['2024-12-17', '2024-12-18', '2024-12-19', '2024-12-20', '2024-12-21', '2024-12-22', '2024-12-23',
-                  '2024-12-24', '2024-12-25', '2024-12-26'], 'order_counts': [0, 1, 0, 1, 0, 0, 0, 0, 1, 1]},
-                     'Linh Nguyễn': {
-                         'dates': ['2024-12-17', '2024-12-18', '2024-12-19', '2024-12-20', '2024-12-21', '2024-12-22',
-                                   '2024-12-23', '2024-12-24', '2024-12-25', '2024-12-26', '2024-12-27'],
-                         'order_counts': [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1]}, 'Vũ Lê': {
-            'dates': ['2024-12-17', '2024-12-18', '2024-12-19', '2024-12-20', '2024-12-21', '2024-12-22'],
-            'order_counts': [0, 0, 0, 0, 0, 1]}, 'Thiện Trần': {
-            'dates': ['2024-12-17', '2024-12-18', '2024-12-19', '2024-12-20', '2024-12-21', '2024-12-22', '2024-12-23'],
-            'order_counts': [0, 0, 0, 0, 0, 0, 1]}, 'Hải Nguyễn': {
-            'dates': ['2024-12-17', '2024-12-18', '2024-12-19', '2024-12-20', '2024-12-21', '2024-12-22', '2024-12-23',
-                      '2024-12-24'], 'order_counts': [0, 0, 0, 0, 0, 0, 0, 1]}}
+    order40 = SaleOrder(customer_id=customer4.customer_id, order_date=datetime.strptime('2024-04-16', '%Y-%m-%d').date(), total_amount=product4.price * 200 + product5.price * 200,
+                            employee_id=employee5.employee_id)
+    db.session.add(order40)
+    db.session.commit()
+    order_detail40 = OrderDetails(order_id=order40.id, product_id=product4.product_id, quantity=200, unit_price=product4.price)
+    db.session.add(order_detail40)
+    order_detail40_2 = OrderDetails(order_id=order40.id, product_id=product5.product_id, quantity=200, unit_price=product5.price)
+    db.session.add(order_detail40_2)
+    db.session.commit()
+    order41 = SaleOrder(customer_id=customer5.customer_id, order_date=datetime.strptime('2024-03-17', '%Y-%m-%d').date(), total_amount=product5.price * 205 + product6.price * 205,
+                            employee_id=employee1.employee_id)
+    db.session.add(order41)
+    db.session.commit()
+    order_detail41 = OrderDetails(order_id=order41.id, product_id=product5.product_id, quantity=205, unit_price=product5.price)
+    db.session.add(order_detail41)
+    order_detail41_2 = OrderDetails(order_id=order41.id, product_id=product6.product_id, quantity=205, unit_price=product6.price)
+    db.session.add(order_detail41_2)
+    order42 = SaleOrder(customer_id=customer6.customer_id, order_date=datetime.strptime('2024-02-18', '%Y-%m-%d').date(), total_amount=product6.price * 210 + product7.price * 210,
+                            employee_id=employee2.employee_id)
+    db.session.add(order42)
+    db.session.commit()
+    order_detail42 = OrderDetails(order_id=order42.id, product_id=product6.product_id, quantity=210, unit_price=product6.price)
+    db.session.add(order_detail42)
+    order_detail42_2 = OrderDetails(order_id=order42.id, product_id=product7.product_id, quantity=210, unit_price=product7.price)
+    db.session.add(order_detail42_2)
+    order43 = SaleOrder(customer_id=customer7.customer_id, order_date=datetime.strptime('2024-01-19', '%Y-%m-%d').date(), total_amount=product7.price * 215 + product8.price * 215,
+                            employee_id=employee3.employee_id)
+    db.session.add(order43)
+    db.session.commit()
+    order_detail43 = OrderDetails(order_id=order43.id, product_id=product7.product_id, quantity=215, unit_price=product7.price)
+    db.session.add(order_detail43)
+    order_detail43_2 = OrderDetails(order_id=order43.id, product_id=product8.product_id, quantity=215, unit_price=product8.price)
+    db.session.add(order_detail43_2)
+    order44 = SaleOrder(customer_id=customer8.customer_id, order_date=datetime.strptime('2024-01-20', '%Y-%m-%d').date(), total_amount=product8.price * 220 + product9.price * 220,
+                            employee_id=employee4.employee_id)
+    db.session.add(order44)
+    db.session.commit()
+    order_detail44 = OrderDetails(order_id=order44.id, product_id=product8.product_id, quantity=220, unit_price=product8.price)
+    db.session.add(order_detail44)
+    order_detail44_2 = OrderDetails(order_id=order44.id, product_id=product9.product_id, quantity=220, unit_price=product9.price)
+    db.session.add(order_detail44_2)
+    order45 = SaleOrder(customer_id=customer9.customer_id, order_date=datetime.strptime('2024-06-21', '%Y-%m-%d').date(), total_amount=product9.price * 225 + product10.price * 225,
+                            employee_id=employee5.employee_id)
+    db.session.add(order45)
+    db.session.commit()
+    order_detail45 = OrderDetails(order_id=order45.id, product_id=product9.product_id, quantity=225, unit_price=product9.price)
+    db.session.add(order_detail45)
+    order_detail45_2 = OrderDetails(order_id=order45.id, product_id=product10.product_id, quantity=225, unit_price=product10.price)
+    db.session.add(order_detail45_2)
+    order46 = SaleOrder(customer_id=customer10.customer_id, order_date=datetime.strptime('2024-06-22', '%Y-%m-%d').date(), total_amount=product10.price * 230 + product11.price * 230,
+                            employee_id=employee1.employee_id)
+    db.session.add(order46)
+    db.session.commit()
+    order_detail46 = OrderDetails(order_id=order46.id, product_id=product10.product_id, quantity=230, unit_price=product10.price)
+    db.session.add(order_detail46)
+    order_detail46_2 = OrderDetails(order_id=order46.id, product_id=product11.product_id, quantity=230, unit_price=product11.price)
+    db.session.add(order_detail46_2)
+    order47 = SaleOrder(customer_id=customer11.customer_id, order_date=datetime.strptime('2024-06-23', '%Y-%m-%d').date(), total_amount=product11.price * 235 + product12.price * 235,
+                            employee_id=employee2.employee_id)
+    db.session.add(order47)
+    db.session.commit()
+    order_detail47 = OrderDetails(order_id=order47.id, product_id=product11.product_id, quantity=235, unit_price=product11.price)
+    db.session.add(order_detail47)
+    order_detail47_2 = OrderDetails(order_id=order47.id, product_id=product12.product_id, quantity=235, unit_price=product12.price)
+    db.session.add(order_detail47_2)
+    order48 = SaleOrder(customer_id=customer12.customer_id, order_date=datetime.strptime('2024-04-24', '%Y-%m-%d').date(), total_amount=product12.price * 240 + product1.price * 240,
+                            employee_id=employee3.employee_id)
+    db.session.add(order48)
+    db.session.commit()
+    order_detail48 = OrderDetails(order_id=order48.id, product_id=product12.product_id, quantity=240, unit_price=product12.price)
+    db.session.add(order_detail48)
+    order_detail48_2 = OrderDetails(order_id=order48.id, product_id=product1.product_id, quantity=240, unit_price=product1.price)
+    db.session.add(order_detail48_2)
+    db.session.commit()
+
+

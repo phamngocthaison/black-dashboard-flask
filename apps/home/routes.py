@@ -47,10 +47,13 @@ def get_top_products():
     return top_products
 
 
-def get_today_qty():
+def get_today_qty(period=7):
+    start_period = datetime.now().date() - timedelta(days=period)
     total_stock_qty_sold = db.session.query(
-        func.sum(OrderDetails.quantity).label('total_stock_qty_sold')
-    ).filter(func.strftime('%Y-%m-%d', SaleOrder.order_date) == func.strftime('%Y-%m-%d', func.now())).scalar()
+        func.sum(OrderDetails.quantity).label('total_qty')
+    ).join(SaleOrder, OrderDetails.order_id == SaleOrder.id).filter(
+        SaleOrder.order_date.between(start_period, datetime.now().date())
+    ).scalar()
     return total_stock_qty_sold
 
 
@@ -73,6 +76,16 @@ def get_monthly_sales():
     months = [sale.month for sale in monthly_sales]
     monthly_totals = [sale.total_sales for sale in monthly_sales]
     return months, monthly_totals
+
+
+def get_today_order_count():
+    today = datetime.now().date()
+    total_order_count = db.session.query(
+        func.count(SaleOrder.id).label('total_order_count')
+    ).filter(
+        func.date(SaleOrder.order_date) == today
+    ).scalar()
+    return total_order_count
 
 
 def get_last_7_days_product_qty():
@@ -103,17 +116,17 @@ def get_monthly_order_quantities():
 
 def get_last_7_days_employee_orders(period=7):
     today = datetime.now().date()
-    seven_days_ago = today - timedelta(days=period)
+    start_period = today - timedelta(days=period)
     daily_employee_orders = db.session.query(
         func.strftime('%Y-%m-%d', SaleOrder.order_date).label('date'),
         Employee.name,
         func.count(SaleOrder.id).label('order_count')
     ).join(Employee, SaleOrder.employee_id == Employee.employee_id).filter(
-        SaleOrder.order_date.between(seven_days_ago, today)
+        SaleOrder.order_date.between(start_period, today)
     ).group_by('date', Employee.name).order_by('date').all()
 
     data = {}
-    last_days = [(seven_days_ago + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(period + 1)]
+    last_days = [(start_period + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(period + 1)]
     default_data = {'dates': last_days, 'order_counts': [0] * (period + 1)}
     for record in daily_employee_orders:
         if record.name not in data:
@@ -144,7 +157,7 @@ def index():
         func.sum(SaleOrder.total_amount).label('total_sales')
     ).join(Employee, SaleOrder.employee_id == Employee.employee_id).group_by(Employee.name).all()
     employee_names = [sale.name for sale in daily_sales]
-    daily_total = sum([sale.total_sales for sale in daily_sales])
+    daily_total = get_today_sales()
     total_sales = [sale.total_sales for sale in daily_sales]
     months, monthly_totals = get_monthly_sales()
     total_stock_qty_sold_today = get_today_qty()
@@ -152,6 +165,7 @@ def index():
     shipment_months, shipment_quantities = get_monthly_order_quantities()
     total_sales_today = get_today_sales()
     employee_orders_data = get_last_7_days_employee_orders()
+    today_order_count = get_today_order_count()
     return render_template('home/index.html', segment='index',
                            top_customers=top_customers, daily_sales=daily_sales,
                            employee_names=employee_names, daily_total=daily_total,
@@ -160,7 +174,7 @@ def index():
                            total_stock_qty_sold_today=total_stock_qty_sold_today,
                            dates=dates, quantities=quantities,
                            shipment_months=shipment_months, shipment_quantities=shipment_quantities,
-                           total_sales_today=total_sales_today,
+                           today_order_count=today_order_count,
                            employee_orders_data=employee_orders_data)
 
 
