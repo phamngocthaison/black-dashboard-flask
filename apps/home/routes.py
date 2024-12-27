@@ -100,9 +100,10 @@ def get_monthly_order_quantities():
     quantities = [record.total_quantity for record in monthly_order_quantities]
     return months, quantities
 
-def get_last_7_days_employee_orders():
+
+def get_last_7_days_employee_orders(period=7):
     today = datetime.now().date()
-    seven_days_ago = today - timedelta(days=7)
+    seven_days_ago = today - timedelta(days=period)
     daily_employee_orders = db.session.query(
         func.strftime('%Y-%m-%d', SaleOrder.order_date).label('date'),
         Employee.name,
@@ -112,8 +113,8 @@ def get_last_7_days_employee_orders():
     ).group_by('date', Employee.name).order_by('date').all()
 
     data = {}
-    last_days = [(seven_days_ago + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(8)]
-    default_data = {'dates': last_days, 'order_counts': [0] * 8}
+    last_days = [(seven_days_ago + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(period + 1)]
+    default_data = {'dates': last_days, 'order_counts': [0] * (period + 1)}
     for record in daily_employee_orders:
         if record.name not in data:
             data[record.name] = copy.deepcopy(default_data)
