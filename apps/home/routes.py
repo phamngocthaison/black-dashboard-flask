@@ -136,29 +136,35 @@ def get_last_7_days_employee_orders(period=7):
     print(data)
     return data
 
+
+def get_top_customer():
+    return (db.session.query(
+        Customer,
+        func.sum(SaleOrder.total_amount).label('total_order_amount')
+    )
+            .join(SaleOrder, Customer.customer_id == SaleOrder.customer_id)
+            .group_by(Customer.customer_id)
+            .order_by(func.sum(SaleOrder.total_amount).desc())
+            .limit(10)
+            .all())
+
+
+def get_total_sales_by_employee():
+    return db.session.query(
+        Employee.name,
+        func.sum(SaleOrder.total_amount).label('total_sales')
+    ).join(Employee, SaleOrder.employee_id == Employee.employee_id).group_by(Employee.name).limit(5).all()
+
 @blueprint.route('/index')
 @login_required
 def index():
-    top_customers = (
-        db.session.query(
-            Customer,
-            func.sum(SaleOrder.total_amount).label('total_order_amount')
-        )
-        .join(SaleOrder, Customer.customer_id == SaleOrder.customer_id)
-        .group_by(Customer.customer_id)
-        .order_by(func.sum(SaleOrder.total_amount).desc())
-        .limit(10)
-        .all()
-    )
+    top_customers = get_top_customer()
     top_employees = get_top_employee()
     top_products = get_top_products()
-    daily_sales = db.session.query(
-        Employee.name,
-        func.sum(SaleOrder.total_amount).label('total_sales')
-    ).join(Employee, SaleOrder.employee_id == Employee.employee_id).group_by(Employee.name).all()
-    employee_names = [sale.name for sale in daily_sales]
+    employee_total_sales = get_total_sales_by_employee()
+    employee_names = [sale.name for sale in employee_total_sales]
     daily_total = get_today_sales()
-    total_sales = [sale.total_sales for sale in daily_sales]
+    total_sales = [sale.total_sales for sale in employee_total_sales]
     months, monthly_totals = get_monthly_sales()
     total_stock_qty_sold_today = get_today_qty()
     dates, quantities = get_last_7_days_product_qty()
@@ -167,7 +173,7 @@ def index():
     employee_orders_data = get_last_7_days_employee_orders()
     today_order_count = get_today_order_count()
     return render_template('home/index.html', segment='index',
-                           top_customers=top_customers, daily_sales=daily_sales,
+                           top_customers=top_customers,
                            employee_names=employee_names, daily_total=daily_total,
                            total_sales=total_sales, top_employees=top_employees,
                            top_products=top_products, months=months, monthly_totals=monthly_totals,
