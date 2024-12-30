@@ -34,7 +34,7 @@ with app.app_context():
     db.session.query(OrderDetails).delete()
     db.session.commit()
     # Add user admin pass admin
-    user = Users(username='admin', password='admin', email='admin@uit.vn')
+    user = Users(username='admin', password='admin', email='admin@uit.edu.vn')
     db.session.add(user)
     db.session.commit()
 
